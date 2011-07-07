@@ -39,10 +39,19 @@ rm -rf $RPM_BUILD_ROOT
 %{__install} -pD -m644 %{SOURCE1} \
     $RPM_BUILD_ROOT%{_bindir}/aencoder.tcl
 
+%clean
+rm -rf $RPM_BUILD_ROOT
+
 
 %files
+%defattr(755,root,root)
+%config(noreplace) %{_bindir}/aencoder
+%config(noreplace) %{_bindir}/aencoder.tcl
+
 %doc
 
 
 
 %changelog
+* Thu Jul  08 2011 Vasiliy N. Glazov <vascom2@gmail.com>
+- initial build
