@@ -6,7 +6,6 @@ Summary:        Graphic mencoder frontend for recoding video for Android devices
 License:        GPLv2
 URL:            http://github.com/goletsa/aEncoder
 Source0:        aencoder
-Source1:        aencoder.tcl
 
 
 Requires:       mencoder
@@ -46,7 +45,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_bindir}/aencoder
 
 
-%doc CHANGELOG COPYING README
+%doc
 
 
 %changelog
