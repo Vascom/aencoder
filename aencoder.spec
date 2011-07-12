@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
-* Thu Jul  08 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-2.R
+* Tue Jul  12 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-2.R
 - using original archive and add patch to it
 
 * Thu Jul  08 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-1.R
