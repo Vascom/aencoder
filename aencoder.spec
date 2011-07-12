@@ -1,11 +1,12 @@
 Name:           aencoder           
 Version:        0.99.5
-Release:        1%{?dist}.R
+Release:        2%{?dist}.R
 Summary:        Graphic mencoder frontend for recoding video for Android devices
 
 License:        GPLv2
 URL:            http://github.com/goletsa/aEncoder
-Source0:        aencoder
+Source0:        https://github.com/downloads/goletsa/aEncoder/aEncoder_%{version}_linux.tar.gz
+Patch00:        simple.patch
 
 
 Requires:       mencoder
@@ -22,7 +23,8 @@ Graphic mencoder frontend for recoding video for Android devices
 
 
 %prep
-echo "Nothing to prep"
+%setup -q -n aEncoder_%{version}_linux
+%patch00 -p1
 
 
 %build
@@ -33,7 +35,7 @@ echo "Nothing to build"
 rm -rf $RPM_BUILD_ROOT
 
 # File install
-%{__install} -pD -m644 %{SOURCE0} \
+%{__install} -pD -m644 %{_builddir}/aEncoder_%{version}_linux/aEncoder.tcl \
     $RPM_BUILD_ROOT%{_bindir}/aencoder
 
 %clean
@@ -49,6 +51,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jul  08 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-2.R
+- using original archive and add patch to it
+
 * Thu Jul  08 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-1.R
 - initial build
 - moved all functionality to one file
