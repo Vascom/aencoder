@@ -46,7 +46,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(755,root,root)
-%config(noreplace) %{_bindir}/aencoder
+%{_bindir}/aencoder
 
 
 %doc CHANGELOG COPYING README
