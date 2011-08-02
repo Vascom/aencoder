@@ -1,0 +1,37 @@
+diff -uNdr aEncoder_0.99.5_linux/aEncoder.tcl aEncoder_0.99.5-1_linux/aEncoder.tcl
+--- aEncoder_0.99.5_linux/aEncoder.tcl	2011-07-12 10:11:55.860766710 +0400
++++ aEncoder_0.99.5-1_linux/aEncoder.tcl	2011-08-02 10:41:41.537226244 +0400
+@@ -45,9 +45,9 @@
+     global vdata resx resy
+     set aspect [expr ${resx}.0/$resy]
+     if {$vdata(aspect) < $aspect} {
+-        return "crop=:[expr round(($vdata(height)*$vdata(aspect))*($resy.0/$resx))],dsize=[expr $resx.0/$resy.0]"
++        return "crop=:[expr round(($vdata(height)*$vdata(aspect))*($resy.0/$resx))],dsize=[expr $resx.0/$resy.0],"
+     } elseif {$::cropwidth} {
+-        return "crop=[expr round($vdata(height)*($resx.0/$resy))],dsize=[expr $resx.0/$resy.0]"
++        return "crop=[expr round($vdata(height)*($resx.0/$resy))],dsize=[expr $resx.0/$resy.0],"
+     } elseif {$::subsenabled} {
+         return "expand=:::::[expr $resx.0/$resy.0],"
+     } else {
+@@ -59,6 +59,7 @@
+     set cmd ""
+     if {$::alang != ""} {append cmd " -alang $::alang"}
+     if {$::slang != "" && $::subsenabled} {append cmd " -slang $::slang "}
++    return $cmd
+ }
+ 
+ proc analyze {} {
+@@ -448,11 +449,11 @@
+ }
+ 
+ proc turbo1stpass {infile fps sound} {
+-    return [fixfps "\"$infile\" -of avi -srate 44100 -ovc x264 [getsound $sound]-x264encopts level=30:pass=1:bitrate=[.options.bitrate.v get]:vbv-maxrate=1500:vbv-bufsize=2000:subme=0:analyse=0:partitions=none:ref=1:turbo=2:me=dia:bframes=0:threads=auto:nocabac:bframes=0:weightp=0:8x8dct=0 [getsubtitleopts $infile] -vf [getscaleopts]scale=-10:-1,scale=0:-10,scale=${::resx}:-10::::::1,scale=-10:${::resy}::::::1,harddup -o /dev/null" $fps]
++    return [fixfps "\"$infile\" [getlangopts] -of avi -srate 44100 -ovc x264 [getsound $sound]-x264encopts level=30:pass=1:bitrate=[.options.bitrate.v get]:vbv-maxrate=1500:vbv-bufsize=2000:subme=0:analyse=0:partitions=none:ref=1:turbo=2:me=dia:bframes=0:threads=auto:nocabac:bframes=0:weightp=0:8x8dct=0 [getsubtitleopts $infile] -vf [getscaleopts]scale=-10:-1,scale=0:-10,scale=${::resx}:-10::::::1,scale=-10:${::resy}::::::1,harddup -o /dev/null" $fps]
+ }
+ 
+ proc normalsecondpass {infile fps sound} {
+-    return [fixfps "\"$infile\" -of avi -srate 44100 -ovc x264 [getsound $sound]-x264encopts level=30:pass=2:bitrate=[.options.bitrate.v get]:vbv-maxrate=1500:vbv-bufsize=2000:subme=6:analyse=0:partitions=none:ref=1:nocabac:bframes=0:threads=auto:weightp=0:8x8dct=0 [getsubtitleopts $infile] -vf [getscaleopts]scale=-10:-1,scale=0:-10,scale=0:-10,scale=${::resx}:-10::::::1,scale=-10:${::resy}::::::1,harddup -o \"$::outdir/video.avi\"" $fps]
++    return [fixfps "\"$infile\" [getlangopts] -of avi -srate 44100 -ovc x264 [getsound $sound]-x264encopts level=30:pass=2:bitrate=[.options.bitrate.v get]:vbv-maxrate=1500:vbv-bufsize=2000:subme=6:analyse=0:partitions=none:ref=1:nocabac:bframes=0:threads=auto:weightp=0:8x8dct=0 [getsubtitleopts $infile] -vf [getscaleopts]scale=-10:-1,scale=0:-10,scale=0:-10,scale=${::resx}:-10::::::1,scale=-10:${::resy}::::::1,harddup -o \"$::outdir/video.avi\"" $fps]
+ }
+ 
+ proc getnormalize {} {

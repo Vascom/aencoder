@@ -1,12 +1,13 @@
 Name:           aencoder           
 Version:        0.99.5
-Release:        2%{?dist}.R
+Release:        3%{?dist}.R
 Summary:        Graphic mencoder frontend for recoding video for Android devices
 
 License:        GPLv2
 URL:            http://github.com/goletsa/aEncoder
 Source0:        https://github.com/downloads/goletsa/aEncoder/aEncoder_%{version}_linux.tar.gz
 Patch00:        simple.patch
+Patch01:        sound-track-select.patch
 
 
 Requires:       mencoder
@@ -25,6 +26,7 @@ Graphic mencoder frontend for recoding video for Android devices
 %prep
 %setup -q -n aEncoder_%{version}_linux
 %patch00 -p1
+%patch01 -p1
 
 
 %build
@@ -51,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Tue Aug 02 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-3.R
+- Added sound-track-select.patch
+
 * Tue Jul  12 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-2.R
 - using original archive and add patch to it
 
