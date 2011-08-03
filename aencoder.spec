@@ -1,6 +1,6 @@
 Name:           aencoder           
 Version:        0.99.5
-Release:        3%{?dist}.R
+Release:        4%{?dist}.R
 Summary:        Graphic mencoder frontend for recoding video for Android devices
 
 License:        GPLv2
@@ -10,7 +10,7 @@ Patch00:        simple.patch
 Patch01:        sound-track-select.patch
 
 
-Requires:       mencoder
+Requires:       mencoder-nonfree
 Requires:       tk >= 8.5
 Requires:       tcl >= 8.5
 Requires:       gpac >= 0.4.4      
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Wed Aug 03 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-4.R
+- Changed requires from mplayer to mencoder-nonfree
+
 * Tue Aug 02 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-3.R
 - Added sound-track-select.patch
 
