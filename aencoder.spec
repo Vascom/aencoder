@@ -1,16 +1,16 @@
 Name:           aencoder           
 Version:        0.99.5
-Release:        4%{?dist}.R
+Release:        5%{?dist}.R
 Summary:        Graphic mencoder frontend for recoding video for Android devices
 
 License:        GPLv2
 URL:            http://github.com/goletsa/aEncoder
 Source0:        https://github.com/downloads/goletsa/aEncoder/aEncoder_%{version}_linux.tar.gz
-Patch00:        simple.patch
-Patch01:        sound-track-select.patch
+Patch00:        aencoder-simple.patch
+Patch01:        aencoder-langopts.patch
 
 
-Requires:       mencoder-nonfree
+Requires:       mencoder-faac
 Requires:       tk >= 8.5
 Requires:       tcl >= 8.5
 Requires:       gpac >= 0.4.4      
@@ -53,6 +53,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Mon Aug 08 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-5.R
+- Patches rename and update
+
 * Wed Aug 03 2011 Vasiliy N. Glazov <vascom2@gmail.com> 0.99.5-4.R
 - Changed requires from mplayer to mencoder-nonfree
 
