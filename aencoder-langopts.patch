@@ -1,7 +1,7 @@
-diff -uNdr aEncoder_0.99.5_linux/aEncoder.tcl aEncoder_0.99.5-1_linux/aEncoder.tcl
---- aEncoder_0.99.5_linux/aEncoder.tcl	2011-07-12 10:11:55.860766710 +0400
-+++ aEncoder_0.99.5-1_linux/aEncoder.tcl	2011-08-02 10:41:41.537226244 +0400
-@@ -45,9 +45,9 @@
+diff -rubB aEncoder_0.99.5_linux/aEncoder.tcl aEncoder_0.99.5-2_linux/aEncoder.tcl
+--- aEncoder_0.99.5_linux/aEncoder.tcl  2010-06-06 19:28:09.000000000 +0400
++++ aEncoder_0.99.5-2_linux/aEncoder.tcl    2011-08-07 18:52:07.000000000 +0400
+@@ -43,9 +43,9 @@
      global vdata resx resy
      set aspect [expr ${resx}.0/$resy]
      if {$vdata(aspect) < $aspect} {
@@ -13,15 +13,77 @@ diff -uNdr aEncoder_0.99.5_linux/aEncoder.tcl aEncoder_0.99.5-1_linux/aEncoder.t
      } elseif {$::subsenabled} {
          return "expand=:::::[expr $resx.0/$resy.0],"
      } else {
-@@ -59,6 +59,7 @@
+@@ -55,8 +55,21 @@
+ 
+ proc getlangopts {} {
      set cmd ""
-     if {$::alang != ""} {append cmd " -alang $::alang"}
-     if {$::slang != "" && $::subsenabled} {append cmd " -slang $::slang "}
+-    if {$::alang != ""} {append cmd " -alang $::alang"}
+-    if {$::slang != "" && $::subsenabled} {append cmd " -slang $::slang "}
++    if {[string is integer $::alang]} {
++        append cmd " -aid $::alang"
++    } elseif {$::alang != ""} {
++        append cmd " -alang $::alang"
++    }
++
++    if {$::subsenabled} {
++        if {[string is integer $::slang]} {
++            append cmd " -sid $::slang"
++        } elseif {$::slang != ""} {
++            append cmd " -slang $::slang"
++        }
++    }
++
 +    return $cmd
  }
  
  proc analyze {} {
-@@ -448,11 +449,11 @@
+@@ -68,7 +81,7 @@
+     return ""
+     }
+ 
+-    if {[catch {tk_messageBox -icon info -type ok -title "Результат анализа файла" -message "Разрешение: $vdata(width)x$vdata(height)\nПропорции: $vdata(aspect)\nЯзык аудио: $vdata(atracks)\nЯзык субтитров: $vdata(stracks)"}]} {
++    if {[catch {tk_messageBox -icon info -type ok -title "Результат анализа файла" -message "Разрешение: $vdata(width)x$vdata(height)\nПропорции: $vdata(aspect)\nЯзык аудио:\n$vdata(atracks)\nЯзык субтитров:\n$vdata(stracks)"}]} {
+         tk_messageBox -icon error -type ok -title "Ошибка" -message "Неверный формат файла!"
+     }
+ }
+@@ -355,16 +368,32 @@
+         set vdata(noaspect) 0
+         wlog "Aspect ratio: $vdata(aspect)"
+     }
++
+     set vdata(atracks) ""
+     set vdata(stracks) ""
+-    foreach {tmp audio} [regexp -all -line -inline {^ID_AID_\d+_LANG=(.+)$} $data] {
+-        lappend vdata(atracks) $audio
++    foreach {tmp id audio} [regexp -all -line -inline {^ID_AID_(\d+)_LANG=(.+)$} $data] {
++        lappend vdata(atracks) $id-$audio
+     wlog "Audio lang: $audio"
+     }
+-    foreach {tmp sub} [regexp -all -line -inline {^ID_SID_\d+_LANG=(.+)$} $data] {
+-        lappend vdata(stracks) $sub
++
++    foreach {tmp id sub} [regexp -all -line -inline {^ID_SID_(\d+)_LANG=(.+)$} $data] {
++        lappend vdata(stracks) $id-$sub
+     wlog "Subs lang: $sub"
+     }   
++
++    if {$vdata(atracks) == ""} {
++        foreach {tmp id} [regexp -all -line -inline {^ID_AUDIO_ID=(\d+)$} $data] {
++            lappend vdata(atracks) $id-xxx
++            wlog "Audio id: $id"
++        }
++    }
++
++    if {$vdata(stracks) == ""} {
++        foreach {tmp id} [regexp -all -line -inline {^ID_SUBTITLE_ID=(\d+)$} $data] {
++            lappend vdata(stracks) $id-xxx
++            wlog "Subs id: $id"
++        }
++    }
+ }
+ 
+ proc cleanup {} {
+@@ -446,11 +475,11 @@
  }
  
  proc turbo1stpass {infile fps sound} {
@@ -35,3 +97,16 @@ diff -uNdr aEncoder_0.99.5_linux/aEncoder.tcl aEncoder_0.99.5-1_linux/aEncoder.t
  }
  
  proc getnormalize {} {
+@@ -621,10 +650,10 @@
+ grid [ttk::labelframe .misc -text "Дополнительные настройки"] -row 3 -column 0 -padx 1 -sticky nswe
+ grid [ttk::label .misc.al -text "Язык аудио дорожки:"] -row 0 -column 0 -padx 2 -sticky w
+ grid [ttk::combobox .misc.audiolang -width 3 -textvariable alang] -row 0 -column 1 -sticky w
+-.misc.audiolang configure -values [list rus ru eng en jpn ja]
++.misc.audiolang configure -values [list rus eng jpn 0 1 2 3]
+ grid [ttk::label .misc.sl -text "Язык субтитров:"] -row 1 -column 0 -padx 2 -sticky w
+ grid [ttk::combobox .misc.sublang -width 3 -textvariable slang] -row 1 -column 1 -sticky w
+-.misc.sublang configure -values [list rus ru eng en jpn ja]
++.misc.sublang configure -values [list rus eng jpn 0 1 2 3]
+ grid [ttk::button .misc.help -text "?" -width 1 -command showhelp] -row 1 -rowspan 1 -column 4 -pady 2 -sticky nswe
+ grid [ttk::combobox .misc.subcp -width 11 -textvariable subcp] -row 1 -column 3 -sticky w
+ .misc.subcp configure -values [list CP1251 UTF-8 ISO-8859-1 ISO-8859-2 ISO-8859-3 ISO-8859-4 ISO-8859-5 ISO-8859-6 ISO-8859-7 ISO-8859-8 ISO-8859-9 ISO-8859-10 ISO-8859-13 ISO-8859-14 ISO-8859-15 CP1250 CP1252 CP1253 CP1254 CP1255 CP1256 CP1257 CP1258 KOI8-R CP895 CP852 UCS-2 UCS-4 UTF-7 CP866]
